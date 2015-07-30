@@ -2,52 +2,49 @@
 ##    DATE: 2015/7/29
 ## PURPOSE: ASSIGNMENT WORK.
 
-# Part 1:
+# Going to need this work.
+# For work:
+#setwd("C:\\Users\\mitcolli\\Documents\\Docs\\code\\Coursera\\RProgramming\\wk4")
+# For Home:
 
-pollutantmean <- function(directory, pollutant, id = 1:332) {
-  ## 'directory' is a character vector of length 1 indicating
-  ## the location of the CSV files
+#read data:
+# data <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
+
+best <- function(state, outcome){
+  ## Read outcome Data.
+  hAttack  <- "Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack"
+  hFAilure <- "Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure"
+  pSick    <- "Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia"
   
-  ## 'pollutant' is a character vector of length 1 indicating
-  ## the name of the pollutant for which we will calculate the
-  ## mean; either "sulfate" or "nitrate".
+  ## Check that state and outcome are valid.
+  if(!is.character(state)){
+    print("State is not valid: Exiting.")
+    break
+  }
+  else if(is.character(outcome) & (outcome != hAttack | outcome != hFailure | outcome != pSick)){
+    print("outcome is not a valid searchable condition.")
+    break
+  }
   
-  ## 'id' is an integer vector indicating the monitor ID numbers
-  ## to be used
+  ## Return hospital name in that state with lowest 30-day death
+  ## rate.
   
-  ## Return the mean of the pollutant across all monitors list
-  ## in the 'id' vector (ignoring NA values)
-  ## NOTE: Do not round the result!
 }
 
-# Part 2:
-complete <- function(directory, id = 1:332) {
-  ## 'directory' is a character vector of length 1 indicating
-  ## the location of the CSV files
+checkHospitals <- function(data){
+  # This should work:
+  # heartAttack <- subset(outcome, !(is.na(outcome$Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack)))
+  # heartFailure <- subset(outcome, !(is.na(outcome$Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure)))
+  # pneumonia <- subset(outcome, !(is.na(outcome$Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia)))
   
-  ## 'id' is an integer vector indicating the monitor ID numbers
-  ## to be used
   
-  ## Return a data frame of the form:
-  ## id nobs
-  ## 1  117
-  ## 2  1041
-  ## ...
-  ## where 'id' is the monitor ID number and 'nobs' is the
-  ## number of complete cases
 }
 
-# Part 3:
-
-corr <- function(directory, threshold = 0) {
-  ## 'directory' is a character vector of length 1 indicating
-  ## the location of the CSV files
-  
-  ## 'threshold' is a numeric vector of length 1 indicating the
-  ## number of completely observed observations (on all
-  ## variables) required to compute the correlation between
-  ## nitrate and sulfate; the default is 0
-  
-  ## Return a numeric vector of correlations
-  ## NOTE: Do not round the result!
-}
+# NOTES:
+# Use this for filtering.
+# temp <- subset(outcome, outcome$State == "NY" & !is.na(outcome[hAttack]))
+#
+# grab the min index or grab the frame?
+# Let's make it fun and use the concept from the last project here;
+# push the whole frame into the parent environment!
+# Don't forget to convert to numeric! (is.numeric(val))
