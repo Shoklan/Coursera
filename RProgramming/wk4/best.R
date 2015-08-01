@@ -30,7 +30,7 @@ best <- function(state, outcome){
   
   ## Check that state and outcome are valid.
   if(!is.character(state) | !checkState(state)){
-    stop("State is not valid: Exiting.")
+    stop("invalid state")
   }
   else if(!is.character(outcome) & (outcome != hAttack | outcome != hFailure | outcome != pSick)){
     stop("outcome is not a valid searchable condition.")
