@@ -41,18 +41,18 @@ best <- function(state, outcome){
     
     # Retrieve all possible hostpitals in the state:
     temp <- subset(data, data$State == state)
-    # Debug: randomTemp <<- temp
+    # Debug:randomTemp <<- temp
     
     # pull out all number of outcomes and sort:
     filterTarget<- sort(as.numeric(temp[,outcome]))
     
-    # Debug: randomFilter <<- filterTarget
+    # Debug:randomFilter <<- filterTarget
     
     # PUll out any duplicates in the data frame with the same number of
     # occurances:
     potentialResults <- subset(temp, temp[,outcome] == min(filterTarget))
     
-    # Debug: random <<- potentialResults
+    # Debug:random <<- potentialResults
     
     # If more than one result, sort and get first name:
     if(length(potentialResults[outcome]) > 1){
