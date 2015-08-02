@@ -7,7 +7,7 @@
 
 filterState <- function(data, outcome, name, num){
   # Create container for data
-  results <- data.frame(Hospital.Name = NA, State = NA)
+  results <- data.frame(hospital = NA, state = NA)
   count   <- 1
   if(num == "worst") worstFlag <- TRUE
   else               worstFlag <- FALSE
@@ -31,24 +31,24 @@ filterState <- function(data, outcome, name, num){
     reference <- slice[ order(slice[,outcome], slice[,name]), ]
     if(worstFlag) num <- length(slice[,1])
     #DEBUG:
-    print(count)
-    print(st)
+    #print(count)
+    #print(st)
     randomSlice <<- slice
     randomReference <<- reference
     
     if(count == 1){
-      results[1,name]  <- reference[num,name]
-      results[1,"State"] <- reference[num,"State"]
+      results[1,"hospital"]  <- reference[num,name]
+      results[1,"state"] <- reference[num,"State"]
     }
     else if(num > length(reference[,1])){
-      results[count,name]    <- NA
-      results[count,"State"] <- st
-      print(c("NUmber of Hospitals", length(reference[,1])))
-      print(c("Hospital Name: ", reference[num,name]))
-      print(reference[num,st])
+      results[count,"hospital"]    <- NA
+      results[count,"state"] <- st
+      #print(c("NUmber of Hospitals", length(reference[,1])))
+      #print(c("Hospital Name: ", reference[num,name]))
+      #print(reference[num,st])
     }else{
-      results[count,name]  <- reference[num,name]
-      results[count,"State"] <- reference[num,"State"]
+      results[count,"hospital"]  <- reference[num,name]
+      results[count,"state"] <- reference[num,"State"]
     }
     
     count <- count +1
@@ -56,8 +56,10 @@ filterState <- function(data, outcome, name, num){
   
   # Now I get to sort this too...
   # reference <- slice[ order(slice[,outcome], slice[,name]), ]
+  
+  results[ order(randomResults[,"state"], randomResults[,"hospital"]), ]
   randomResults <<- results
-  results[ order(randomResults[,"State"], randomResults[,name]), ]
+  #print(results)
   results
 }
 
