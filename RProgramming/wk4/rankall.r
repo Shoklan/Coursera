@@ -14,6 +14,8 @@ filterState <- function(data, outcome, name, num){
   if(num == "best")        num <- 1
   
   # Begin going through data!
+  #!# There are 4 territories that need to be added: [1] "DC", "GU", "PR", "VI"
+  #!# also, %in% is a thing to be used!
   for(st in state.abb){
     # Generate slice of state data
     slice <- subset(data, data$State == st)
