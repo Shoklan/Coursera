@@ -6,3 +6,8 @@
 #        | system.
 #        | Graph #1
 ####################################################################################
+
+
+# Note: Rds stands for R Data Serialization.
+NEI <- readRDS("summarySCC_PM25.rds")
+SCC <- readRDS("Source_Classification_Code.rds")
