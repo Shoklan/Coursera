@@ -7,6 +7,52 @@
 #        | Graph #2
 ####################################################################################
 
+############
+# Functions:
+#
+# Function to collect the substrings
+collectSubstring <- function(data, years, cityFIPS="24510", index=1){
+  for(year in years){
+    print(c("Year: ", year))
+    print(c("index: ", index))
+    subStringCollection[index] <- substring(data, data$year == year & data$cityFIPS == cityFIPS)
+    index <- index+1
+  }
+  
+  subStringCollection
+}
+
+# Function to sum 
+collectEmissions <- function(collection, index=1:length(years)){
+  for(year in index){
+    data[index] <- sum(collection$Emissions)
+  }
+  
+  data   
+}
+#
+# End Functions
+###############
+
+
+
 # Note: Rds stands for R Data Serialization.
 NEI <- readRDS("summarySCC_PM25.rds")
 SCC <- readRDS("Source_Classification_Code.rds")
+
+# Get each unique year
+years <- levels(as.factor(NEI$year))
+
+# Pull out relevant years data into substrings
+subStrings    <- collectSubstring(NEI, years)
+
+# collect the data for plotting.
+sumCollection <- collectEmissions(subStrings)
+
+
+# Plotting phase!
+png(file = "plot2.png")
+plot(years,  sumCollection)
+
+# CLOSE OR LOSE YOUR DATA
+dev.off()
