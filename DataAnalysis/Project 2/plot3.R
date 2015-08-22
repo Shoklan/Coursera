@@ -13,7 +13,7 @@
 # Function to collect and split databy year
 collectYears <- function(data, years, cityFIPS="24510", index=1){
   # This will create an empty dataframe!
-  culumFrames <- read.table(text = "", col.names = temp)
+  culumFrames <- read.table(text = "", col.names = col.names)
   for(yr in years){
     culumFrames <- rbind(culumFrames, filter(data, year == yr, fips == cityFIPS))
   }

@@ -11,32 +11,28 @@
 # Functions:
 #
 # Function to collect the substrings
-collectSubstring <- function(data, years, sccValues, index=1){
-  for(year in years){
-    subStringCollection[index] <- substring(data, data$year == years & data$SCC %in% sccValues)
+collectFrames <- function(data, years, sccValues, index=1){
+  # culumFrames <- read.table(text = "", col.names = col.names)
+  culumSum <- 0
+  for(yr in years){
+    temp            <- filter(data, year == yr, SCC %in% sccValues)
+    culumSum[index] <- sum(temp$Emissions)
     index <- index+1
   }
   
-  subStringCollection
+  culumSum
 }
 
 # map coalIndexes to SCC values
 convertIndexToSCC <- function(indexes, SCCIndex=1){
+  sccValues <- vector()
   for(index in indexes){
-    sccValues[SCCIndex] <- SCC$SCC[index]
+    print(c("SSC Code", as.character(SCC$SCC[index])))
+    sccValues[SCCIndex] <- as.character(SCC$SCC[index])
     SCCIndex <- SCCIndex +1
   }
   
   sccValues
-}
-
-# Function to sum emissions
-collectEmissions <- function(collection, index=1:length(years)){
-  for(i in index){
-    data[i] <- sum(collection$Emissions)
-  }
-  
-  data  
 }
 #
 # End Functions
@@ -49,19 +45,23 @@ SCC <- readRDS("Source_Classification_Code.rds")
 # Get each unique year
 years <- levels(as.factor(NEI$year))
 
+# grab column names from data
+col.names <- colnames(NEI)
+
 # Find which codes map to coal using grep("coal", data)
 coalNameIndexes <- grep("coal", SCC$Short.Name)
 
 # Pull out SCC values based on the coal search indexes.
 sccCodes <-convertIndexToSCC(coalNameIndexes)
 
-# Get values and sum for plotting
+# Get values
+frames <- collectFrames(NEI, years, sccCodes)
 
 
 
 # Plotting phase!
 png(file = "plot4.png")
-plot(years,  sumCollection)
+plot(years,  frames)
 
 # CLOSE OR LOSE YOUR DATA
 dev.off()

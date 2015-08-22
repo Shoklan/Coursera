@@ -11,22 +11,16 @@
 # Functions:
 #
 # Function to collect the substrings
-collectSubstring <- function(data, years, index=1){
-  for(year in years){
-    subStringCollection[index] <- substring(data, data$year == years[index])
+collectFrames <- function(data, years, sccValues, index=1){
+  culumSum <- 0
+  for(yr in years){
+    temp            <- filter(data, year == yr, SCC %in% sccValues)
+    randomTemp <<- temp
+    culumSum[index] <- sum(temp$Emissions)
     index <- index+1
   }
   
-  subStringCollection
-}
-
-# Function to sum emissions
-collectEmissions <- function(collection, index=1:length(years)){
-  for(i in index){
-    data[i] <- sum(collection$Emissions)
-  }
-  
-  data  
+  culumSum
 }
 #
 # End Functions
@@ -36,6 +30,20 @@ collectEmissions <- function(collection, index=1:length(years)){
 NEI <- readRDS("summarySCC_PM25.rds")
 SCC <- readRDS("Source_Classification_Code.rds")
 
+# Get each unique year
+years <- levels(as.factor(NEI$year))
+
+# grab column names from data
+col.names <- colnames(NEI)
+
+# Pull out SCC values based on the coal search indexes.
+motorNameIndexes <- grep("Motor Vehicle", SCC$Short.Name)
+
+# Realized that I don't need a function to get the SCC codes
+sccCodes <- SCC$SCC[motorNameIndexes]
+
+# Grab frames
+frames <- collectFrames(NEI, years, sccCodes)
 
 
 
@@ -43,7 +51,7 @@ SCC <- readRDS("Source_Classification_Code.rds")
 
 # Plotting phase!
 png(file = "plot5.png")
-plot(years,  sumCollection)
+plot(years,  frames)
 
 # CLOSE OR LOSE YOUR DATA
 dev.off()

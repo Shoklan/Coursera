@@ -11,22 +11,15 @@
 # Functions:
 #
 # Function to collect the substrings
-collectSubstring <- function(data, years, index=1){
-  for(year in years){
-    subStringCollection[index] <- substring(data, data$year == years[index])
+collectFrames <- function(data, years, sccValues, cityFIPS="24510", index=1){
+  culumSum <- 0
+  for(yr in years){
+    temp            <- filter(data, year == yr, SCC %in% sccValues, fips == cityFIPS)
+    culumSum[index] <- sum(temp$Emissions)
     index <- index+1
   }
   
-  subStringCollection
-}
-
-# Function to sum emissions
-collectEmissions <- function(collection, index=1:length(years)){
-  for(i in index){
-    data[i] <- sum(collection$Emissions)
-  }
-  
-  data  
+  culumSum
 }
 #
 # End Functions
@@ -36,7 +29,24 @@ collectEmissions <- function(collection, index=1:length(years)){
 NEI <- readRDS("summarySCC_PM25.rds")
 SCC <- readRDS("Source_Classification_Code.rds")
 
+# Get each unique year
+years <- levels(as.factor(NEI$year))
 
+# grab column names from data
+col.names <- colnames(NEI)
+
+# Los Angeles County FIPS
+LAFIPS <- "06037"
+
+# Pull out SCC values based on the coal search indexes.
+motorNameIndexes <- grep("Motor Vehicle", SCC$Short.Name)
+
+# DON'T FORGET THIS NEEDS TO BE A CHARACTER
+sccCodes <- as.character(SCC$SCC[motorNameIndexes])
+
+# Pulling two different data frames!
+BCFrame <- collectFrames(NEI, years, sccCodes)
+LAFrame <- collectFrames(NEI, years, sccCodes, cityFIPS = LAFIPS)
 
 
 
@@ -44,7 +54,9 @@ SCC <- readRDS("Source_Classification_Code.rds")
 
 # Plotting phase!
 png(file = "plot6.png")
-plot(years,  sumCollection)
+par(mfrow = c(2,1))
+plot(years,  BCFrame)
+plot(years,  LAFrame)
 
 # CLOSE OR LOSE YOUR DATA
 dev.off()
