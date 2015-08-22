@@ -10,23 +10,15 @@
 ############
 # Functions:
 #
-# Function to collect the substrings
-collectSubstring <- function(data, types, cityFIPS="24510", index=1){
-  for(type in types){
-    subStringCollection[index] <- substring(data, data$type == type & data$cityFIPS == cityFIPS)
-    index <- index+1
+# Function to collect and split databy year
+collectYears <- function(data, years, cityFIPS="24510", index=1){
+  # This will create an empty dataframe!
+  culumFrames <- read.table(text = "", col.names = temp)
+  for(yr in years){
+    culumFrames <- rbind(culumFrames, filter(data, year == yr, fips == cityFIPS))
   }
   
-  subStringCollection
-}
-
-# Function to sum emissions
-collectEmissions <- function(collection, index=1:length(years)){
-  for(i in index){
-    data[i] <- sum(collection$Emissions)
-  }
-  
-  data  
+  culumFrames
 }
 #
 # End Functions
@@ -36,19 +28,25 @@ collectEmissions <- function(collection, index=1:length(years)){
 NEI <- readRDS("summarySCC_PM25.rds")
 SCC <- readRDS("Source_Classification_Code.rds")
 
-types <- c("point", "nonpoint", "onroad", "nonroad")
+library(dplyr)
+library(ggplot2)
+
+# Get each unique year
+years <- levels(as.factor(NEI$year))
+col.names <- colnames(NEI)
+
+# types <- c("point", "nonpoint", "onroad", "nonroad")
 
 # Pull out relevant years data into substrings
-subStrings    <- collectSubstring(NEI, types)
+collectYears <- collectYears(NEI, years)
 
-# collect the data for plotting.
-sumCollection <- collectEmissions(subStrings)
 
 
 # Plotting phase!
 png(file = "plot3.png")
 # Need to use ggplot2
 #plot(years,  sumCollection)
+qplot(year, Emissions, data = collectYears, facets = type ~ ., geom = "smooth", method = "lm")
 
 # CLOSE OR LOSE YOUR DATA
 dev.off()
