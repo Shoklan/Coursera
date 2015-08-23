@@ -54,7 +54,7 @@ LAFrame <- collectFrames(NEI, years, sccCodes, cityFIPS = LAFIPS)
 
 # Plotting phase!
 png(file = "plot6.png")
-par(mfrow = c(2,1))
+par(mfrow = c(1,2))
 plot(years,  BCFrame)
 plot(years,  LAFrame)
 

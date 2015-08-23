@@ -14,9 +14,11 @@
 collectSums <- function(data, years, index=1){
   culumSum <- 0
   for(yr in years){
-     temp <- filter(data, year == yr)
-     culumSum[index] <- sum(temp$Emissions)
-     index <- index +1
+    print(c("Year: ", yr))
+    print(c("Index: ", index))
+    temp <- filter(data, year == yr)
+    culumSum[index] <- sum(temp$Emissions)
+    index <- index +1
   }
   
   culumSum
