@@ -41,7 +41,8 @@ sums <- collectSums(NEI, years)
 
 # Plotting phase!
 png(file = "plot2.png")
-plot(years,  sums)
+plot(years,  sums, main="Emission Totals for Baltimore City", xlab="Year", ylab="Emissions   (Tons)")
+lines(years, sums)
 
 # CLOSE OR LOSE YOUR DATA
 dev.off()

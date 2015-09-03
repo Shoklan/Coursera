@@ -33,20 +33,15 @@ library(ggplot2)
 
 # Get each unique year
 years <- levels(as.factor(NEI$year))
+# Steal column names
 col.names <- colnames(NEI)
-
-# types <- c("point", "nonpoint", "onroad", "nonroad")
 
 # Pull out relevant years data into substrings
 collectYears <- collectYears(NEI, years)
 
-
-
 # Plotting phase!
-png(file = "plot3.png")
-# Need to use ggplot2
-#plot(years,  sumCollection)
-qplot(year, Emissions, data = collectYears, facets = type ~ ., geom = "smooth", method = "lm")
+png(file = "plot3.png", height=600, width=600)
+qplot(year, Emissions, data = collectYears, facets = type ~ ., geom = "smooth", method = "lm", xlab="Year", ylab = "Emissions (Tons)") + ggtitle("Baltimore City Emissions by Type")
 
 # CLOSE OR LOSE YOUR DATA
 dev.off()

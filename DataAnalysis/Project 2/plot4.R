@@ -10,7 +10,7 @@
 ############
 # Functions:
 #
-# Function to collect the substrings
+# Function to collect frames
 collectFrames <- function(data, years, sccValues, index=1){
   # culumFrames <- read.table(text = "", col.names = col.names)
   culumSum <- 0
@@ -25,9 +25,9 @@ collectFrames <- function(data, years, sccValues, index=1){
 
 # map coalIndexes to SCC values
 convertIndexToSCC <- function(indexes, SCCIndex=1){
+  # blank storage vector
   sccValues <- vector()
   for(index in indexes){
-    print(c("SSC Code", as.character(SCC$SCC[index])))
     sccValues[SCCIndex] <- as.character(SCC$SCC[index])
     SCCIndex <- SCCIndex +1
   }
@@ -61,7 +61,8 @@ frames <- collectFrames(NEI, years, sccCodes)
 
 # Plotting phase!
 png(file = "plot4.png")
-plot(years,  frames)
+plot(years,  frames, main = "US Coal Emissions", xlab="Year", ylab = "Emissions   (Tons)")
+lines(years, frames)
 
 # CLOSE OR LOSE YOUR DATA
 dev.off()

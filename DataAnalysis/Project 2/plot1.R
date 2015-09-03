@@ -38,12 +38,12 @@ years <- levels(as.factor(NEI$year))
 
 # Pull out relevant years data
 sums <- collectSums(NEI, years)
+adjustedSums <- sums/5000
 
 # Plotting phase!
 png(file = "plot1.png")
-plot(years, sums)
+plot(years, adjustedSums, main = "Emission Totals Per Year", xlab = "Year", ylab = "Emissions   (Tons/10K)")
+lines(years, adjustedSums)
 
 # CLOSE OR LOSE YOUR DATA
 dev.off()
-
-

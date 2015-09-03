@@ -53,10 +53,11 @@ LAFrame <- collectFrames(NEI, years, sccCodes, cityFIPS = LAFIPS)
 
 
 # Plotting phase!
-png(file = "plot6.png")
+png(file = "plot6.png", height=600, width=700)
 par(mfrow = c(1,2))
-plot(years,  BCFrame)
-plot(years,  LAFrame)
-
+plot(years,  BCFrame, main="Baltimore City Emissions", xlab="Year", ylab="Emissions (Tons)")
+lines(years, BCFrame)
+plot(years,  LAFrame, main="Los Angeles Emissions", xlab="Year", ylab="Emissions (Tons)")
+lines(years, LAFrame)
 # CLOSE OR LOSE YOUR DATA
 dev.off()

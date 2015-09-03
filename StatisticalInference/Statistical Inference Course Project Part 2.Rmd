@@ -1,0 +1,51 @@
+---
+title: "Statistical Inference Project Part 2"
+author: "Collin Mitchell"
+date: "August 23, 2015"
+output: html_document
+---
+
+# Overview
+This paper is to discuss an Analysis of the ToothGrow Dataset within the R Library.
+A prelimenary overview of the data shows that it is comprised of Three Columns: Length of Growth, Suppliment, and the Dosage.
+
+The most obvious beginning function to get an initial understanding is the Summary function.
+```{r}
+# load the data and display the summary.
+data("ToothGrowth")
+summary(ToothGrowth)
+```
+
+
+While this is interesting, what we really want to know is how effective the suppliments are.
+So, how many different types are there? The suppliments are: `r levels(as.factor(ToothGrowth$supp))`.
+
+These two abbreviations stand for Viatmin C and Orange Juice, respectively.
+We want to split the data up based on these two factors. So, where does the split occur?
+```{r}
+match("OJ", ToothGrowth$supp)
+```
+So, the first index for Orange Juice is 31, out of `r length(ToothGrowth$supp)`. That means the data is split right in half.
+
+And, we can visualize this using the below statements.
+
+```{r}
+# pull out the data to make it easier to plot via reference
+toothLength <- ToothGrowth$len
+toothDose   <- ToothGrowth$dose
+
+par(mfrow = c(1,2))
+vitaminC <- plot(toothLength[ 1:30], toothDose[ 1:30], main="Vitamin C Dosage", xlab="Tooth Length", ylab="Suppliment Dosage")
+orangeJ  <- plot(toothLength[31:60], toothDose[31:60], main="Orange Juice Dosage", xlab="Tooth Length", ylab="Suppliment Dosage")
+```
+
+From the graphs, is looks like Orange Juice is a much better suppliment for teeth than just Vitamin C at lower doses. However, as the volume of Vitamin C increases, we can see that the growth of the teeth supstantially increases beyond what Orange Juice does.
+
+
+```{r}
+library(reshape2)
+alteredTeeth <- dcast(ToothGrowth, supp + len ~ dose)
+t.test(len ~ supp, paired = F, var.equal = T, data = alteredTeeth)$conf
+```
+From the test, it seems that the two sets of data are not comparable.
+ 

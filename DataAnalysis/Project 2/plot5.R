@@ -51,7 +51,7 @@ frames <- collectFrames(NEI, years, sccCodes)
 
 # Plotting phase!
 png(file = "plot5.png")
-plot(years,  frames)
-
+plot(years,  frames, main="US Motor Vehicle Emissions", xlab="Year", ylab="Emissions  (Tons)")
+lines(years,  frames)
 # CLOSE OR LOSE YOUR DATA
 dev.off()
