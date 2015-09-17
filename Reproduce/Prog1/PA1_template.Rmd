@@ -1,0 +1,21 @@
+---
+title: "Programming Assignment 1"
+author: "Collin Mitchell"
+date: "September 16, 2015"
+output: html_document
+---
+
+
+
+## Variables
+baseurl <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+file.dir <- "./data"
+completepath <- paste(file.dir, "/data.zip", sep = "")
+
+
+# Get a
+if(!file.exists(file.dir)){ dir.create("./data")}
+download.file(baseurl, destfile = completepath)
+filename <- unzip(completepath, exdir=file.dir)
+
+data <- read.csv(filename)
