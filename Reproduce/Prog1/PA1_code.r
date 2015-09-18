@@ -40,9 +40,11 @@ for(distinctdates in levels(data$date)){
   index <- index + 1
 }
 
-
-# Challenge 2
 # Histogram of values
+print( factor(cumulativeSums) )
+hist(cumulativeSums)
+
+
 # Report mean & median steps/day
 for(distinctdates in levels(data$date)){
   temp <- filter(data, date == distinctdates)
@@ -56,8 +58,12 @@ for(distinctdates in levels(data$date)){
   index <- index + 1
 }
 
-# Histogram?
+# Report results.
+print(cumulativeMeans)
+print(cumulativeMedians)
 
+
+# Histogram?
 
 # Challenge 3
 # Time series plot: 5-minute interval, avg steps taken, across all days
@@ -68,11 +74,16 @@ splitOnInterval <- dcast(data, date + steps ~ interval)
 for(index in 3:ncol(splitOnInterval) ){
   cumulativeInterval[index-2] <- sum(splitOnInterval[,index], na.rm = T)
 }
-  
+
+# Fix the plot labels, but otherwise done.
+plot(colnames(splitOnInterval)[3:length(splitOnInterval)], cumulativeInterval)
+
+colnames(splitOnInterval)[match(max(cumulativeInterval))]
 
 # Challenge 4
 # n of NAs in data?
 # deal with NA's in data and substitute solution in copy of data
+sum(is.na(data$steps))
 
 
 # Challenge 5 | NEW DATASET
