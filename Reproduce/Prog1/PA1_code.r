@@ -42,28 +42,32 @@ for(distinctdates in levels(data$date)){
 
 # Histogram of values
 print( factor(cumulativeSums) )
+length(cumulativeSums)
 hist(cumulativeSums)
 
 
 # Report mean & median steps/day
+index = 1
 for(distinctdates in levels(data$date)){
   temp <- filter(data, date == distinctdates)
-  cumulativeMeans[index] = sum(temp$steps, rm.na = T)
+  cumulativeMeans[index] = mean(temp$steps, rm.na = T)
   index <- index + 1
 }
 
+length(cumulativeMeans)
+
+index = 1
 for(distinctdates in levels(data$date)){
   temp <- filter(data, date == distinctdates)
-  cumulativeMedians[index] = sum(temp$steps, rm.na = T)
+  cumulativeMedians[index] = median(temp$steps)
   index <- index + 1
 }
+
+length(cumulativeMedians)
 
 # Report results.
 print(cumulativeMeans)
 print(cumulativeMedians)
-
-
-# Histogram?
 
 # Challenge 3
 # Time series plot: 5-minute interval, avg steps taken, across all days
@@ -76,9 +80,11 @@ for(index in 3:ncol(splitOnInterval) ){
 }
 
 # Fix the plot labels, but otherwise done.
-plot(colnames(splitOnInterval)[3:length(splitOnInterval)], cumulativeInterval)
+plot(colnames(splitOnInterval)[3:length(splitOnInterval)], cumulativeInterval, type = "l")
 
-colnames(splitOnInterval)[match(max(cumulativeInterval))]
+
+# I wanted the solution to be generic:
+colnames(splitOnInterval)[match(max(cumulativeInterval), cumulativeInterval) + 2]
 
 # Challenge 4
 # n of NAs in data?
@@ -86,7 +92,29 @@ colnames(splitOnInterval)[match(max(cumulativeInterval))]
 sum(is.na(data$steps))
 
 
-# Challenge 5 | NEW DATASET
+for(distinctdates in levels(data$date)){
+  tempData <- filter(data, date == distinctdates)
+  fillmean <- mean(tempData$steps, rm.na = T)
+  print(distinctdates)
+  
+  #Don't forget about this exception
+  if(is.na(fillmean)){ fillmean = 0}
+  
+  while(sum(is.na(tempData$steps))){
+    target <- match(NA, tempData$steps)
+    print(tempData$steps[target])
+    tempData$steps[target] <- fillmean
+    print(target)
+  }
+  
+  if(nrow(copyData) == 1){ copyData <- tempData}
+  else{
+    copyData <- rbind(copyData, tempData)
+  }
+
+}
+
+
 # Histogram of number of steps/day
 # calculate mean/median again.
 # Different from before?
