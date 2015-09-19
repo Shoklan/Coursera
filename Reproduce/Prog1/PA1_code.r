@@ -9,12 +9,14 @@ file.dir     <- "./data"
 completepath <- paste(file.dir, "/data.zip", sep = "")
 weekday.list <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday")
 
-cumulativeSums         <- 0
-cumulativeMeans        <- 0
-cumulativeMedians      <- 0
-cumulativeInterval     <- 0
-cumulativeFixedMeans   <- 0
-cumulativeFixedMedians <- 0
+cumulativeSums            <- 0
+cumulativeMeans           <- 0
+cumulativeMedians         <- 0
+cumulativeInterval        <- 0
+cumulativeFixedMeans      <- 0
+cumulativeFixedMedians    <- 0
+cumulativeWeekendInterval <- 0
+cumulativeWeekdayInterval <- 0
 
 ## Libraries
 library(dplyr)
@@ -82,7 +84,6 @@ for(index in 3:ncol(splitOnInterval) ){
   cumulativeInterval[index-2] <- sum(splitOnInterval[,index], na.rm = T)
 }
 
-print(cumulative)
 
 # Fix the plot labels, but otherwise done.
 plot(colnames(splitOnInterval)[3:length(splitOnInterval)], cumulativeInterval, type = "l")
@@ -149,7 +150,29 @@ length(cumulativeFixedMedians)
 ##  else weekend
 # Panel plot| 5 minute interval steps/day wkend vs wkday.
 
-?weekdays
-targetDate <- levels(data$date)[1]
+
 # You might take points off for this, but there is a much easier way to do this than factors:
 mutateDate <- mutate(copyData, weekday = weekdays(as.Date(date)) %in% weekday.list)
+
+
+splitOnFixedInterval <- dcast(mutateDate, date + steps + weekday ~ interval)
+weekendData  <- filter(splitOnFixedInterval, weekday == FALSE)
+weekdayData  <- filter(splitOnFixedInterval, weekday == TRUE)
+
+index <- 1
+for(index in 3:ncol(weekendData) ){
+  cumulativeWeekendInterval[index-2] <- sum(weekendData[,index], na.rm = T)
+}
+
+index <- 1
+for(index in 3:ncol(weekdayData) ){
+  cumulativeWeekdayInterval[index-2] <- sum(weekdayData[,index], na.rm = T)
+}
+
+par(mfrow = c(2,1))
+
+# Fix the plot labels, but otherwise done.
+plot(colnames(weekendData)[3:length(weekendData)], cumulativeWeekendInterval, type = "l")
+plot(colnames(weekdayData)[3:length(weekdayData)], cumulativeWeekdayInterval, type = "l")
+
+
