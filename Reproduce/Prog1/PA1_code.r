@@ -1,17 +1,20 @@
 # Author: Collin Mitchell
-#   Date: September 15, 2015
+# Date: September 15, 2015
 #
 
 
 ## Variables
-baseurl <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
-file.dir <- "./data"
+baseurl      <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+file.dir     <- "./data"
 completepath <- paste(file.dir, "/data.zip", sep = "")
+weekday.list <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday")
 
-cumulativeSums     <- 0
-cumulativeMeans    <- 0
-cumulativeMedians  <- 0
-cumulativeInterval <- 0
+cumulativeSums         <- 0
+cumulativeMeans        <- 0
+cumulativeMedians      <- 0
+cumulativeInterval     <- 0
+cumulativeFixedMeans   <- 0
+cumulativeFixedMedians <- 0
 
 ## Libraries
 library(dplyr)
@@ -79,6 +82,8 @@ for(index in 3:ncol(splitOnInterval) ){
   cumulativeInterval[index-2] <- sum(splitOnInterval[,index], na.rm = T)
 }
 
+print(cumulative)
+
 # Fix the plot labels, but otherwise done.
 plot(colnames(splitOnInterval)[3:length(splitOnInterval)], cumulativeInterval, type = "l")
 
@@ -91,6 +96,7 @@ colnames(splitOnInterval)[match(max(cumulativeInterval), cumulativeInterval) + 2
 # deal with NA's in data and substitute solution in copy of data
 sum(is.na(data$steps))
 
+copyData <- data.frame(steps = NA, date = NA, interval = NA)
 
 for(distinctdates in levels(data$date)){
   tempData <- filter(data, date == distinctdates)
@@ -118,6 +124,23 @@ for(distinctdates in levels(data$date)){
 # Histogram of number of steps/day
 # calculate mean/median again.
 # Different from before?
+index = 1
+for(distinctdates in levels(copyData$date)){
+  temp <- filter(copyData, date == distinctdates)
+  cumulativeFixedMeans[index] = mean(temp$steps, rm.na = T)
+  index <- index + 1
+}
+
+length(cumulativeFixedMeans)
+
+index = 1
+for(distinctdates in levels(copyData$date)){
+  temp <- filter(copyData, date == distinctdates)
+  cumulativeFixedMedians[index] = median(temp$steps)
+  index <- index + 1
+}
+
+length(cumulativeFixedMedians)
 
 # Challenge 6 | NEW DATASET
 # //Weekdays() funct.
@@ -125,3 +148,8 @@ for(distinctdates in levels(data$date)){
 ##  if day %in% ("Monday-Friday") = weekday
 ##  else weekend
 # Panel plot| 5 minute interval steps/day wkend vs wkday.
+
+?weekdays
+targetDate <- levels(data$date)[1]
+# You might take points off for this, but there is a much easier way to do this than factors:
+mutateDate <- mutate(copyData, weekday = weekdays(as.Date(date)) %in% weekday.list)
