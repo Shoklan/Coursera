@@ -1,10 +1,20 @@
-# Author: Collin Mitchell
-# Date: September 19, 2015
-# Name: ReproduceProject2.R
+---
+title: "Weather Danger Analysis"
+author: "Collin Mitchell"
+date: "September 26, 2015"
+output: html_document
+---
 
 
+# Weather Danger Analysis | Title
+
+##Synopsis
+
+##Data Processing
+
+```{r cache = TRUE}
 # Variables
-dataUrl   <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2"
+#dataUrl   <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2"
 file.dir  <- "./data"
 completepath <- paste(file.dir, "/data.csv.bz2", sep = "")
 expValues <- c("h", "H", "B", "m", "M", "K", "")
@@ -17,7 +27,7 @@ library(dplyr)
 if(!file.exists(file.dir)){ dir.create("./data")}
 
 # Extract Data:
-download.file(dataUrl, destfile = completepath)
+#download.file(dataUrl, destfile = completepath)
 filename <- bzfile(completepath)
 
 # Get data
@@ -79,4 +89,19 @@ for(item in unique(levels(data$EVTYPE))){
   
 }
 
-results <- data.frame(type = levels(data$EVTYPE), propertycost = propertySum[2:length(propertySum)], cropcost = cropSum[2:length(cropSum)], harm=peopleHarmSum[2:length(peopleHarmSum)])
+results <- data.frame(type = levels(data$EVTYPE), propertycost = propertySum[2:length(propertySum)], 
+                      cropcost = cropSum[2:length(cropSum)], 
+                      harm=peopleHarmSum[2:length(peopleHarmSum)])
+
+print(head(sort(propertySum, decreasing = TRUE)))
+print(head(sort(cropSum, decreasing = TRUE)))
+print(head(sort(peopleHarmSum, decreasing = TRUE)))
+
+head(results[,c("type", "propertycost", "cropcost", "harm")], 5)
+```
+
+## Challenge 1: Environmental Effects on Population Health
+
+## Challenge 2: Environmental Costs
+
+##Results
