@@ -28,7 +28,8 @@
 dataUrl   <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2"
 file.dir  <- "./data"
 completepath <- paste(file.dir, "/data.csv.bz2", sep = "")
-cumulativeSum <- 
+cumulativeSum  <- 0
+cumulativeCost <- 0
 
 # Libraries
 library(dplyr)
@@ -55,9 +56,18 @@ data <- read.csv(filename)
 
 index <- 1
 
+# PROPDMG
+#     # PROPDMGEXP
+#     # CROPDMG
+#     # CROPDMGEXP
+
 for(item in levels(data$EVTYPE)){
   tempslice <- filter(data, EVTYPE == item)
   cumulativeSum <- c(cumulativeSum, sum(tempslice$FATALITIES) + sum(tempslice$INJURIES))
+  cumulativeCost <-c(cumulativeCost, sum(tempslice$PROPDMG) +
+                       sum(tempslice$PROPDMGEXP) +
+                       sum(tempslice$PROPDMG) +
+                       sum(tempslice$PROPDMG))
 }
 
 storage <- data.frame(type = levels(data$EVTYPE), sums=cumulativeSum)
