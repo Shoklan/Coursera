@@ -31,10 +31,6 @@ data <- data[-sliceIndexes,]
 propertyCopy <- filter(data, PROPDMGEXP %in% expValues)
 cropCopy     <- filter(data, CROPDMGEXP %in% expValues)
 
-# factor is not dropping the old values;
-# compiling new factors
-propertyCopy$PROPDMGEXP <- factor(propertyCopy$PROPDMGEXP)
-cropCopy$CROPDMGEXP     <- factor(cropCopy$CROPDMGEXP)
 
 
 
@@ -57,6 +53,11 @@ replace <- function(target){
 propertyCopy$PROPDMGEXP <- replace(propertyCopy$PROPDMGEXP)
 cropCopy$PROPDMGEXP     <- replace(cropCopy$PROPDMGEXP)
 
+# factor is not dropping the old values;
+# compiling new factors
+propertyCopy$PROPDMGEXP <- factor(propertyCopy$PROPDMGEXP)
+cropCopy$CROPDMGEXP     <- factor(cropCopy$CROPDMGEXP)
+
 #*# 
 # Mutate and create a new column called cost
 propertyCopy <- mutate(propertyCopy, PropertyCost = as.numeric(PROPDMG) * as.numeric(PROPDMGEXP))
@@ -67,8 +68,8 @@ propertySum <- 0
 cropSum     <- 0
 for(item in unique(levels(data$EVTYPE))){
   tempslice <- filter(data, EVTYPE == item)
-  propertySum <- c(propertySum, sum(tempslice$PropertyCost))
-  cropSum     <- c(cropSum,     sum(tempslice$CropCost))
+  propertySum <- c(propertySum, sum(as.numeric(tempslice$PropertyCost)))
+  cropSum     <- c(cropSum,     sum(as.numeric(tempslice$CropCost)))
 }
 
 # sum individual harms
