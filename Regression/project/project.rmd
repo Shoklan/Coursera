@@ -2,7 +2,7 @@
 title: 'Motor Trend: Picking Manual or Transmission'
 author: "Collin Mitchell"
 date: "October 21, 2015"
-output: pdf_document
+output: html_document
 ---
 # Qualifications
 You work for Motor Trend, a magazine about the automobile industry. Looking at a data set of a collection of cars, they are interested in exploring the relationship between a set of variables and miles per gallon (MPG) (outcome). They are particularly interested in the following two questions:
@@ -21,32 +21,47 @@ vs = cylinder alignment
 
 ```{r}
 data(mtcars)
-carData <- mtcars
-attach(mtcars)
+
 library(dplyr)
 library(ggplot2)
 
 AUTOMATIC <- 0
 MANUAL    <- 1
 
-# Clean up column names
-colnames(mtcars) <- c("mpg", "cylinders", "displacement", "horsepower", "axleratio", "weight", ".25milerun", "", "transmission", "gears", "carburetors")
-
-# store for computing lm's
-values <- vector()
-for(item in colnames(mtcars)[2:11]){ values <- c(values, as.symbol(item))}
-
 manualData <- filter(mtcars, am == MANUAL)
 autoData   <- filter(mtcars, am == AUTOMATIC)
 
-computeLM <- function(varName){
-  return( lm(mpg ~ varname))
+
+compareSubsets <- expression(
+  if( mean(autoData[,quantifier]) > mean(manualData[,quantifier]))
+    print(paste("Automatic wins:", quantifier, sep=" "))
+  else
+    print(paste("Manual wins:", quantifier, sep=" "))
+)
+    
+for(quantifier in colnames(mtcars)){
+  eval(compareSubsets)
 }
+
+
+# NOT RELEVANT
+# qsec
+#
 ```
 
 ## Conlusion
 
 
-- Get a special function to iterate through and store lm models.
-- Split Data into Automatic and Manual transmission.
-- 
+### Questions
+[] Did the student interpret the coefficients correctly?
+[] Did the student do some exploratory data analyses?
+[] Did the student fit multiple models and detail their strategy for model selection?
+[] Did the student answer the questions of interest or detail why the question(s) is (are) not      
+   answerable?
+[] Did the student do a residual plot and some diagnostics?
+[] Did the student quantify the uncertainty in their conclusions and/or perform an inference correctly?
+[] Was the report brief (about 2 pages long) for the main body of the report and no longer than 5 with 
+   supporting appendix of figures?
+[] Did the report include an executive summary?
+[] Was the report done in Rmd (knitr)?
+
