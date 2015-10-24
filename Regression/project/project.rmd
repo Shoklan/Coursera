@@ -24,6 +24,8 @@ data(mtcars)
 
 library(dplyr)
 library(ggplot2)
+library(car)
+library()
 
 AUTOMATIC <- 0
 MANUAL    <- 1
@@ -49,7 +51,7 @@ for(quantifier in colnames(mtcars)){
 #
 ```
 
-## Conlusion
+## Conclusion
 
 
 ### Questions
