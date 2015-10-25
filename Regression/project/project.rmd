@@ -19,51 +19,70 @@ Include a first paragraph executive summary.
 vs = cylinder alignment
 
 
-```{r}
+# Exectutive Summary
+
+# Initial Exploration
+```{r, warning=FALSE, include=FALSE}
+# This is our data.
 data(mtcars)
 
+# Needed libraries.
 library(dplyr)
 library(ggplot2)
 library(car)
-library()
+library(GGally)
+```
 
+Since our data already includes a column for the transmission, I'm going to split the data based on that column. And, after spliting the data I use the quantile function to get a basic idea of the data spread.
+
+```{r}
+# Split data on these terms.
 AUTOMATIC <- 0
 MANUAL    <- 1
 
 manualData <- filter(mtcars, am == MANUAL)
 autoData   <- filter(mtcars, am == AUTOMATIC)
 
-
-compareSubsets <- expression(
-  if( mean(autoData[,quantifier]) > mean(manualData[,quantifier]))
-    print(paste("Automatic wins:", quantifier, sep=" "))
-  else
-    print(paste("Manual wins:", quantifier, sep=" "))
-)
-    
-for(quantifier in colnames(mtcars)){
-  eval(compareSubsets)
-}
-
-
-# NOT RELEVANT
-# qsec
-#
+quantile(manualData$mpg)
+quantile(autoData$mpg)
 ```
+From the listed quantiles, it looks like manual cars should be the winner.
+But, that's too simple and doesn't help us think about future models. We do, after all, want to extrapolate from this data 
 
-## Conclusion
+Since regression models are tied mathematically to Correlation, I've generated a pair plot - see figure 1, in appendix - to help me begin investigating which columns are important. Since our outcome is Miles Per Gallon, we're only going to use the top row. Now, I have selected a threshold of at least |8| for a correlation to be included with the model by default.
+
+This decision will allow me to focus my attention on Cylinders, displacement, and weight as important factors. Note that, in an attempt to be accurate, I'll need to test horsepower in my model as well. It will be considered a lower bound for inclusion unless it is shown to be deceptively necessary.
+
+
+## Models
+Now we're going to 
+
+
+```{r}
+summary(lm(mpg ~ ., data = mtcars))
+```
+Looking at a regression on all variables, I find that the only important column is weight. This coincides with at least one of the variables expected.
+
+
+## Appendix
+```{r}
+# Graphs
+ggpairs(mtcars, lower = list(continuous = "smooth"), params = c(method = "loess"), title = "Figure 1")
+
+
+```
 
 
 ### Questions
 [] Did the student interpret the coefficients correctly?
-[] Did the student do some exploratory data analyses?
+[X] Did the student do some exploratory data analyses?
 [] Did the student fit multiple models and detail their strategy for model selection?
-[] Did the student answer the questions of interest or detail why the question(s) is (are) not      
+[X] Did the student answer the questions of interest or detail why the question(s) is (are) not      
    answerable?
 [] Did the student do a residual plot and some diagnostics?
 [] Did the student quantify the uncertainty in their conclusions and/or perform an inference correctly?
-[] Was the report brief (about 2 pages long) for the main body of the report and no longer than 5 with 
+[X] Was the report brief (about 2 pages long) for the main body of the report and no longer than 5 with 
    supporting appendix of figures?
-[] Did the report include an executive summary?
-[] Was the report done in Rmd (knitr)?
+[X] Did the report include an executive summary?
+[X] Was the report done in Rmd (knitr)?
 
