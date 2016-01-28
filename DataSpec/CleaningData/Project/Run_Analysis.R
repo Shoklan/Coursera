@@ -5,7 +5,9 @@
 
 ## Notes:
 # Final Result will be a list:
-#   Subject1
+#   $DataSet
+#   $Date
+#   $Subject1
 #     $BodyAccelerationX
 #     $BodyAccelerationY
 #     $BodyAccelerationZ
@@ -15,22 +17,12 @@
 #     $Sitting
 #     $Standing
 #     $Laying
-#   Subject2
+#   $Subject2
 #     $BodyAccelerationX
 #     $BodyAccelerationY
 #     $BodyAccelerationZ
 #     ...
-#   Date
-#     Val
 #-------------------------------
-#
-# - Activity Labels |] Found in y_[type].txt
-# 1 WALKING
-# 2 WALKING_UPSTAIRS
-# 3 WALKING_DOWNSTAIRS
-# 4 SITTING
-# 5 STANDING
-# 6 LAYING
 
 #--------------------------------
 #
@@ -43,6 +35,7 @@
 # Libraries|
 #-----------
 library(dplyr)
+library(data.table)
 
 
 ###---------------------------------------
@@ -50,6 +43,7 @@ library(dplyr)
 # Note: Globals are usually bad practice,
 # and I'll convert them after.
 #-----------------------------------------
+Results = list("Date" = Sys.Date())
 timestamp <- Sys.Date()
 dataUrl   <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
 file.dir  <- "./data"
@@ -60,15 +54,10 @@ completePath <- paste(file.dir, "/data.zip", sep = "")
 patternList <- c("body_acc_x", "body_acc_y", "body_acc_z", "body_gyro_x", "body_gyro_y", "body_gyro_z",
                  "total_acc_x", "total_acc_y", "total_acc_z")
 
-# stub
-# Results = list()
-
 ###---------
 # Functions|
 #-----------
-
-####
-# -> selects target file, reads it, then returns as data frame
+# -> Reads file, then returns as data frame
 readFileData <- function(targetFile){
   fwfPattern <- rep(c(-2, 14), times = 128)
   df = read.fwf(targetFile, fwfPattern)
@@ -77,7 +66,7 @@ readFileData <- function(targetFile){
 
 
 ####
-# -> Read Single Column data
+# -> Read Single Column data,
 readSingleColumn <- function(targetFile){
   return(read.fwf(targetFile, c(1)))
 }
@@ -92,29 +81,41 @@ returnIndexes <- function(){
   print(indexes)
 }
 
+#### DELETE
+# -> pull out unique file endings
+#getUniqueList <- function(){
+#  uniqueList <- vector()
+#  for(counter in 1:length(files)){
+#    if(!is.na(files[[counter]][5]))
+#      uniqueList <- c(uniqueList, unique(files[[counter]][5]))
+#  }
+#  return(uniqueList)
+#
+
+
 
 ####
 # -> Collect Data, bind on column per subject, and then return the data frame.
-mergeData <- function(){
-  # stub
-}
-
-####
-# -> pull out unique file endings
-getUniqueList <- function(){
-  uniqueList <- vector()
-  for(counter in 1:length(files)){
-    if(!is.na(files[[counter]][5]))
-      uniqueList <- c(uniqueList, unique(files[[counter]][5]))
-  }
-  return(uniqueList)
+mergeDataFiles <- function(dataFile, activityFile, subjectFile){
+  activityData = readSingleColumn(activityFile)
+  colnames(activityData) <- "activity"
+  activityData$activity <- factor(activityData$activity, levels = c(1,2,3,4,5,6),
+                            labels = c("walking", "WalkingUpstairs", "walkingDownstairs", "sitting", "standing", "laying"))
+  
+  
+  subjectData = readSingleColumn(subjectFile)
+  colnames(subjectData) <- "subject"
+  
+  dataFile = files.list[17]
+  data = readFileData(dataFile)
+  
+  return(cbin(subjectData, activityData, data))
+  
 }
 
 ###----------
 # Begin Work
 #-----------
-
-
 
 # Prepare environment for data and get data.
 if(!file.exists(file.dir)){ dir.create("./data")}
@@ -126,17 +127,31 @@ filename <- unzip(completePath, exdir=file.dir)
 ## collect file's list
 files.list <- list.files(recursive = TRUE)
 files <- strsplit(files.list, split = "/")
+# DELETE: uniqueFileList <- getUniqueList()
 
-uniqueList <- getUniqueList()
+# Vector locations that I want:
+## Test set:
+## -- Data    : 17
+## -- Activity: 18
+## -- Subject : 16
 
+## Test set:
+## -- Data    : 29
+## -- Activity: 30
+## -- Subject : 28
+
+# - Activity Labels |] Found in y_[type].txt
+# 1 WALKING
+# 2 WALKING_UPSTAIRS
+# 3 WALKING_DOWNSTAIRS
+# 4 SITTING
+# 5 STANDING
+# 6 LAYING
 
 # 2] Extract only mean and standard dev details.
 
-# 3] Uses descriptive activity names to name the activities in the data set
+testSet  = mergeDataFiles(files.list[17], files.list[18], files.list[17])
+trainSet = mergeDataFiles(files.list[29], files.list[30], files.list[28])
 
-# 4] Rename variables with useful names
-
-# 5] Create a tidy data set
-
-
-# explore:
+limit = ncol(testSet)
+# Results$Data = 
