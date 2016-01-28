@@ -37,20 +37,19 @@
 # Subject |] Found in x_[type].txt
 # Range 1-30
 
-
-###-------------
-# Initial Setup|
-#---------------
-
+#
+# 
 ###---------
 # Libraries|
 #-----------
 library(dplyr)
 
 
-###---------
+###---------------------------------------
 # Variables|
-#-----------
+# Note: Globals are usually bad practice,
+# and I'll convert them after.
+#-----------------------------------------
 timestamp <- Sys.Date()
 dataUrl   <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
 file.dir  <- "./data"
@@ -61,30 +60,16 @@ completePath <- paste(file.dir, "/data.zip", sep = "")
 patternList <- c("body_acc_x", "body_acc_y", "body_acc_z", "body_gyro_x", "body_gyro_y", "body_gyro_z",
                  "total_acc_x", "total_acc_y", "total_acc_z")
 
-
-# Prepare environment for data and get data.
-if(!file.exists(file.dir)){ dir.create("./data")}
-
-# Extract Data:
-download.file(dataUrl, destfile = completePath)
-filename <- unzip(completePath, exdir=file.dir)
-
-# Stub
-Results = list()
-
-###------------------------------
-# Merge training and test set.  |
-#--------------------------------
-
-
-
+# stub
+# Results = list()
 
 ###---------
 # Functions|
 #-----------
 
-## -> selects target file, reads it, then returns as data frame
-readFileData <- function(targetfile){
+####
+# -> selects target file, reads it, then returns as data frame
+readFileData <- function(targetFile){
   fwfPattern <- rep(c(-2, 14), times = 128)
   df = read.fwf(targetFile, fwfPattern)
   return(df)
@@ -114,23 +99,36 @@ mergeData <- function(){
   # stub
 }
 
+####
+# -> pull out unique file endings
+getUniqueList <- function(){
+  uniqueList <- vector()
+  for(counter in 1:length(files)){
+    if(!is.na(files[[counter]][5]))
+      uniqueList <- c(uniqueList, unique(files[[counter]][5]))
+  }
+  return(uniqueList)
+}
 
 ###----------
 # Begin Work
 #-----------
 
+
+
+# Prepare environment for data and get data.
+if(!file.exists(file.dir)){ dir.create("./data")}
+
+# Extract Data:
+download.file(dataUrl, destfile = completePath)
+filename <- unzip(completePath, exdir=file.dir)
+
 ## collect file's list
 files.list <- list.files(recursive = TRUE)
 files <- strsplit(files.list, split = "/")
 
-## pull out unique file endings
-uniqueList <- vector()
-for(counter in 1:length(files)){
-  if(!is.na(files[[counter]][5]))
-    uniqueList <- c(uniqueList, unique(files[[counter]][5]))
-}
+uniqueList <- getUniqueList()
 
-grep("body_acc_x", uniqueList)
 
 # 2] Extract only mean and standard dev details.
 
