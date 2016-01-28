@@ -22,20 +22,7 @@
 #     $BodyAccelerationY
 #     $BodyAccelerationZ
 #     ...
-#-------------------------------
 
-#--------------------------------
-#
-# Subject |] Found in x_[type].txt
-# Range 1-30
-
-#
-# 
-###---------
-# Libraries|
-#-----------
-library(dplyr)
-library(data.table)
 
 
 ###---------------------------------------
@@ -97,6 +84,14 @@ returnIndexes <- function(){
 ####
 # -> Collect Data, bind on column per subject, and then return the data frame.
 mergeDataFiles <- function(dataFile, activityFile, subjectFile){
+  #dataFile     = files.list[28]
+  #activityFile = files.list[29]
+  #subjectFile  = files.list[27]
+  
+  #dataFile     = files.list[16]
+  #activityFile = files.list[17]
+  #subjectFile  = files.list[15]
+  
   activityData = readSingleColumn(activityFile)
   colnames(activityData) <- "activity"
   activityData$activity <- factor(activityData$activity, levels = c(1,2,3,4,5,6),
@@ -106,11 +101,10 @@ mergeDataFiles <- function(dataFile, activityFile, subjectFile){
   subjectData = readSingleColumn(subjectFile)
   colnames(subjectData) <- "subject"
   
-  dataFile = files.list[17]
   data = readFileData(dataFile)
   
-  return(cbin(subjectData, activityData, data))
-  
+  return(cbind(subjectData, activityData, data))
+  # temp = cbind(subjectData, activityData, data)
 }
 
 ###----------
@@ -129,29 +123,16 @@ files.list <- list.files(recursive = TRUE)
 files <- strsplit(files.list, split = "/")
 # DELETE: uniqueFileList <- getUniqueList()
 
-# Vector locations that I want:
-## Test set:
-## -- Data    : 17
-## -- Activity: 18
-## -- Subject : 16
-
-## Test set:
-## -- Data    : 29
-## -- Activity: 30
-## -- Subject : 28
-
-# - Activity Labels |] Found in y_[type].txt
-# 1 WALKING
-# 2 WALKING_UPSTAIRS
-# 3 WALKING_DOWNSTAIRS
-# 4 SITTING
-# 5 STANDING
-# 6 LAYING
-
 # 2] Extract only mean and standard dev details.
 
-testSet  = mergeDataFiles(files.list[17], files.list[18], files.list[17])
-trainSet = mergeDataFiles(files.list[29], files.list[30], files.list[28])
+testSet  = mergeDataFiles(files.list[16], files.list[17], files.list[15])
+trainSet = mergeDataFiles(files.list[28], files.list[29], files.list[27])
 
 limit = ncol(testSet)
-# Results$Data = 
+data = data.frame(c(testSet[,1], trainSet[,1]))
+for(n in 2:limit)
+  data = cbind(data, c(testSet[,n], trainSet[,n]))
+
+column.names = c("subject", "activity", paste(rep("sample", 128), 1:128, sep = ""))
+colnames(data) <- column.names
+Results$Data = data 
