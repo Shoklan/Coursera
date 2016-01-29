@@ -5,9 +5,9 @@
 
 ## Notes:
 # Final Result will be a list:
-#   $DataSet
 #   $Date
-#   $Subject1
+#   $Data
+#   $Test
 #     $BodyAccelerationX
 #     $BodyAccelerationY
 #     $BodyAccelerationZ
@@ -17,14 +17,10 @@
 #     $Sitting
 #     $Standing
 #     $Laying
-#   $Subject2
+#   $Train
 #     $BodyAccelerationX
 #     $BodyAccelerationY
 #     $BodyAccelerationZ
-#     ...
-
-
-
 ###---------------------------------------
 # Variables|
 # Note: Globals are usually bad practice,
@@ -84,14 +80,6 @@ returnIndexes <- function(){
 ####
 # -> Collect Data, bind on column per subject, and then return the data frame.
 mergeDataFiles <- function(dataFile, activityFile, subjectFile){
-  #dataFile     = files.list[28]
-  #activityFile = files.list[29]
-  #subjectFile  = files.list[27]
-  
-  #dataFile     = files.list[16]
-  #activityFile = files.list[17]
-  #subjectFile  = files.list[15]
-  
   activityData = readSingleColumn(activityFile)
   colnames(activityData) <- "activity"
   activityData$activity <- factor(activityData$activity, levels = c(1,2,3,4,5,6),
@@ -104,13 +92,11 @@ mergeDataFiles <- function(dataFile, activityFile, subjectFile){
   data = readFileData(dataFile)
   
   return(cbind(subjectData, activityData, data))
-  # temp = cbind(subjectData, activityData, data)
 }
 
 ###----------
 # Begin Work
 #-----------
-
 # Prepare environment for data and get data.
 if(!file.exists(file.dir)){ dir.create("./data")}
 
@@ -121,12 +107,17 @@ filename <- unzip(completePath, exdir=file.dir)
 ## collect file's list
 files.list <- list.files(recursive = TRUE)
 files <- strsplit(files.list, split = "/")
-# DELETE: uniqueFileList <- getUniqueList()
 
-# 2] Extract only mean and standard dev details.
+testDataFile = "data/UCI HAR Dataset/test/X_test.txt"
+testActivityFile = "data/UCI HAR Dataset/test/y_test.txt"
+testSubjectFile = "data/UCI HAR Dataset/test/subject_test.txt"
 
-testSet  = mergeDataFiles(files.list[16], files.list[17], files.list[15])
-trainSet = mergeDataFiles(files.list[28], files.list[29], files.list[27])
+trainDataFile = "data/UCI HAR Dataset/train/X_train.txt"
+trainActivityFile = "data/UCI HAR Dataset/train/y_train.txt"
+trainSubjectFile = "data/UCI HAR Dataset/train/subject_train.txt"
+
+testSet  = mergeDataFiles(testDataFile, testActivityFile, testSubjectFile)
+trainSet = mergeDataFiles(trainDataFile, trainActivityFile, trainSubjectFile)
 
 limit = ncol(testSet)
 data = data.frame(c(testSet[,1], trainSet[,1]))
@@ -135,4 +126,16 @@ for(n in 2:limit)
 
 column.names = c("subject", "activity", paste(rep("sample", 128), 1:128, sep = ""))
 colnames(data) <- column.names
-Results$Data = data 
+Results$Data = data
+
+# 2] Extract only mean and standard dev details.
+
+
+indexCollection = data.frame()
+for(pattern in patternList){
+  indexCollection <- rbind(indexCollection, grep(pattern, files.list))
+}
+
+# collect test
+
+# collect train
