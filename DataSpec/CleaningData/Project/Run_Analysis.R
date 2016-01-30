@@ -119,7 +119,7 @@ compileExtraData <- function(){
 
 # This can be used for both the mean or the standard dev.
 complileStat <- function(data, statFunc){
-  return( statFunc(sapply(data, statFunc)))
+  return(sapply(data, statFunc))
 }
 
 ###----------
@@ -150,11 +150,28 @@ column.names = c("subject", "activity", paste(rep("sample", 128), 1:128, sep = "
 colnames(data) <- column.names
 Results$Data = data
 
+dataMean <- compileStat(Restults$Data, mean)
+dataSD   <- compileStat(Restults$Data, sd)
+
+print(dataMean)
+print(dataSD)
+
 # get indexes
 indexCollection <- returnIndexes()
 
 # Going above and beyond
 compileExtraData()
+
+Tidy = list()
+for(action in unique(Results$Data$activity)){
+  Tidy[action] <- mean(compileExtraData(Results$Data$activity[action], mean))
+}
+
+for(subject in unique(Results$data$subject)){
+  Tidy[subject] <- mean(compileExtraData(Results$Data$subject[subject], mean))
+}
+# Collect tidy data frame
+Results$Tidy = Tidy
 
 # Dump everything but the results from memory
 rm(list = (ls()[ -(grep("Results", ls())) ]))
