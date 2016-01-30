@@ -3,18 +3,10 @@
 # Name: Run_Analysis.R
 ################################################
 
-## Notes:
-# Final Result will be a list:
-#   $Date
-#   $Data
-#   $Test
-#     $BodyAccelerationX
-#     $BodyAccelerationY
-#     $BodyAccelerationZ
-#   $Train
-#     $BodyAccelerationX
-#     $BodyAccelerationY
-#     $BodyAccelerationZ
+###---------
+# Libraries|
+#----------- 
+library(dplyr)
 
 ###---------
 # Variables|
@@ -31,7 +23,6 @@ file.dir  <- "./data"
 completePath <- paste(file.dir, "/data.zip", sep = "")
 
 # Try not to do this, but it works for now
-## Test file locations
 testDataFile = "data/UCI HAR Dataset/test/X_test.txt"
 testActivityFile = "data/UCI HAR Dataset/test/y_test.txt"
 testSubjectFile = "data/UCI HAR Dataset/test/subject_test.txt"
@@ -63,7 +54,7 @@ readFileData <- function(targetFile){
 ####
 # -> Read Single Column data,
 readSingleColumn <- function(targetFile){
-  return(read.fwf(targetFile, c(1)))
+  return(read.fwf(targetFile, c(2)))
 }
 
 ####
@@ -81,9 +72,6 @@ returnIndexes <- function(){
 mergeDataFiles <- function(dataFile, activityFile, subjectFile){
   activityData = readSingleColumn(activityFile)
   colnames(activityData) <- "activity"
-  activityData$activity <- factor(activityData$activity, levels = c(1,2,3,4,5,6),
-                            labels = c("walking", "WalkingUpstairs", "walkingDownstairs", "sitting", "standing", "laying"))
-  
   
   subjectData = readSingleColumn(subjectFile)
   colnames(subjectData) <- "subject"
@@ -100,25 +88,28 @@ compileExtraData <- function(){
   
   # since the file list is sorted alphabetically by default,
   # I don't have to worry about ordering it.
-  Test = list()
+  #Test  = list(blank = 1:128)
+  Test  = list()
   Train = list()
+  transfer = list()
   for(n in 1:nrow(indexCollection)){
   
     # read data
     testTemp  = readFileData( files.list[indexCollection[n,1]] )
     trainTemp = readFileData( files.list[indexCollection[n,2]] )
-  
+    
     # assign data
-    Test[sublistNames[n]] = testTemp
-    Train[sublistNames[n]] = trainTemp
+    Test[[sublistNames[n]]] = testTemp
+    Train[[sublistNames[n]]] = trainTemp
   }
   
-  Results$Test  = Test
-  Results$Train = Train
+  transfer$Test = Test
+  transfer$Train = Train
+  return(transfer)
 }
 
 # This can be used for both the mean or the standard dev.
-complileStat <- function(data, statFunc){
+compileStat <- function(data, statFunc){
   return(sapply(data, statFunc))
 }
 
@@ -129,8 +120,8 @@ complileStat <- function(data, statFunc){
 if(!file.exists(file.dir)){ dir.create("./data")}
 
 # Extract Data:
-download.file(dataUrl, destfile = completePath)
-filename <- unzip(completePath, exdir=file.dir)
+#download.file(dataUrl, destfile = completePath)
+#filename <- unzip(completePath, exdir=file.dir)
 
 ## collect file's list
 files.list <- list.files(recursive = TRUE)
@@ -145,33 +136,39 @@ data = data.frame(c(testSet[,1], trainSet[,1]))
 for(n in 2:limit)
   data = cbind(data, c(testSet[,n], trainSet[,n]))
 
+
 # adjust the labels and store in Results List.
 column.names = c("subject", "activity", paste(rep("sample", 128), 1:128, sep = ""))
 colnames(data) <- column.names
+
+data$activity = factor(data$activity, levels = c(1,2,3,4,5,6),
+                       labels = c("walking", "WalkingUpstairs", "walkingDownstairs", "sitting", "standing", "laying"))
+
 Results$Data = data
 
-dataMean <- compileStat(Restults$Data, mean)
-dataSD   <- compileStat(Restults$Data, sd)
-
-print(dataMean)
-print(dataSD)
+Results$DataMean <- mean( compileStat(Results$Data[c(-1,-2)], mean) )
+Results$DataSD   <- mean( compileStat(Results$Data[c(-1,-2)], sd) )
 
 # get indexes
 indexCollection <- returnIndexes()
 
 # Going above and beyond
-compileExtraData()
+catch = list()
+catch = compileExtraData()
+
+Results$Test = catch$Test
+Results$Train = catch$Train
 
 Tidy = list()
 for(action in unique(Results$Data$activity)){
-  Tidy[action] <- mean(compileExtraData(Results$Data$activity[action], mean))
+  Tidy[action] <- mean(compileStat(filter(Results$Data, activity == action)[c(-1,-2)], mean))
 }
 
-for(subject in unique(Results$data$subject)){
-  Tidy[subject] <- mean(compileExtraData(Results$Data$subject[subject], mean))
+for(subject in unique(Results$Data$subject)){
+  Tidy[paste("subject", subject, sep = "")] <- mean(compileStat(filter(Results$Data, subject == subject)[c(-1,-2)], mean))
 }
 # Collect tidy data frame
 Results$Tidy = Tidy
 
 # Dump everything but the results from memory
-rm(list = (ls()[ -(grep("Results", ls())) ]))
+# rm(list = (ls()[ -(grep("Results", ls())) ]))

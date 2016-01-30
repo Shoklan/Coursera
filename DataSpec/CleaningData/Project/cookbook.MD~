@@ -63,24 +63,24 @@ The function is just a wrapper for sapply. Please note that the last line of the
 the compileStat function as it dumps everything aside from the Results list from the environment.
 
 
-File Structure:  
-[D] Project  
-  cookbook.MD    | This file.  
-  Run_Analysis.R | Program to Run.  
-  README.MD      | Explanation of Extraction Process.  
-  [D] data  
-    data.zip     | Downloaded Data Archive.  
-    [D] UCI HAR Dataset  
-      activity_labels.txt   | Original Docs.  
-      features.txt          | Original Docs.  
-      features_info.txt     | Original Docs.  
-      README.txt            | Original Docs.  
-        [D] test  
-          subject_test.txt"   | Subject Number.  
-          X_test.txt          | Subject Data.  
-          y_test.txt          | Activity Number.  
-          [D] Inertial Signals  
-            body_acc_x_test.txt    | Accelerometer X Data.  
+File Structure:
+[D] Project
+  cookbook.MD    | This file.
+  Run_Analysis.R | Program to Run.
+  README.MD      | Explanation of Extraction Process.
+  [D] data
+    data.zip     | Downloaded Data Archive.
+    [D] UCI HAR Dataset
+      activity_labels.txt   | Original Docs.
+      features.txt          | Original Docs.
+      features_info.txt     | Original Docs.
+      README.txt            | Original Docs.
+        [D] test
+          subject_test.txt"   | Subject Number.               
+          X_test.txt          | Subject Data.   
+          y_test.txt          | Activity Number.
+          [D] Inertial Signals
+            body_acc_x_test.txt    | Accelerometer X Data.
             body_acc_y_test.txt    | Accelerometer Y Data.
             body_acc_z_test.txt    | Accelerometer Z Data.
             body_gyro_x_test.txt   | Gyroscope     X Data.
