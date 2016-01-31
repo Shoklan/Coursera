@@ -176,5 +176,6 @@ for(subject in unique(Results$Data$subject)){
 # Collect tidy data frame
 Results$Tidy = Tidy
 
-# Dump everything but the results from memory
+
 # rm(list = (ls()[ -(grep("Results", ls())) ]))
+#save(Results, file = "Results.RData")
