@@ -7,6 +7,7 @@
 # Libraries|
 #----------- 
 library(dplyr)
+library(data.table)
 
 ###---------
 # Variables|
@@ -179,3 +180,4 @@ Results$Tidy = Tidy
 
 # rm(list = (ls()[ -(grep("Results", ls())) ]))
 # save(Results, file = "Results.RData")
+write.table(Results$Tidy, file = "TidyData.txt", row.name = FALSE)
