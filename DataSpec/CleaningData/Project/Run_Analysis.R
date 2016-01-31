@@ -1,5 +1,5 @@
 # Author: Collin Mitchell
-# Date: 2016 January 29th
+# Date: 2016 January 31th
 # Name: Run_Analysis.R
 ################################################
 
