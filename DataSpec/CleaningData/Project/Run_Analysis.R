@@ -11,7 +11,6 @@ library(dplyr)
 ###---------
 # Variables|
 #-----------
-
 # Final List as well as Date of running
 Results = list("Date" = Sys.Date())
 
@@ -77,7 +76,6 @@ mergeDataFiles <- function(dataFile, activityFile, subjectFile){
   colnames(subjectData) <- "subject"
   
   data = readFileData(dataFile)
-  
   return(cbind(subjectData, activityData, data))
 }
 
@@ -103,6 +101,7 @@ compileExtraData <- function(){
     Train[[sublistNames[n]]] = trainTemp
   }
   
+  # collect and pass data
   transfer$Test = Test
   transfer$Train = Train
   return(transfer)
@@ -141,11 +140,14 @@ for(n in 2:limit)
 column.names = c("subject", "activity", paste(rep("sample", 128), 1:128, sep = ""))
 colnames(data) <- column.names
 
+# combining data destroys column names, so remaking.
 data$activity = factor(data$activity, levels = c(1,2,3,4,5,6),
                        labels = c("walking", "WalkingUpstairs", "walkingDownstairs", "sitting", "standing", "laying"))
 
+# Store data in Results.
 Results$Data = data
 
+# collect the important requested stats.
 Results$DataMean <- mean( compileStat(Results$Data[c(-1,-2)], mean) )
 Results$DataSD   <- mean( compileStat(Results$Data[c(-1,-2)], sd) )
 
@@ -153,12 +155,16 @@ Results$DataSD   <- mean( compileStat(Results$Data[c(-1,-2)], sd) )
 indexCollection <- returnIndexes()
 
 # Going above and beyond
+# Grabbing data from the other folders not required
+# for the project
 catch = list()
 catch = compileExtraData()
 
+# collect results
 Results$Test = catch$Test
 Results$Train = catch$Train
 
+# Create tidy data set
 Tidy = list()
 for(action in unique(Results$Data$activity)){
   Tidy[action] <- mean(compileStat(filter(Results$Data, activity == action)[c(-1,-2)], mean))

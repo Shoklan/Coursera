@@ -11,6 +11,7 @@ Please not that features are normalized and bounded within [-1,1]."
 
 After running the Run_Analysis.R script, the structure of the data will change into a list with easy access to all data.
 The format for access would be similar to R list subsections, as below:  
+```
 Results  
   $Date  
   $Data  
@@ -62,7 +63,6 @@ If you wish to run functions per row, then run function compileStat passing it t
 The function is just a wrapper for sapply. Please note that the last line of the script must be commented out if you wish to use
 the compileStat function as it dumps everything aside from the Results list from the environment.
 
-
 File Structure:  
 [D] Project  
   cookbook.MD    | This file.  
@@ -81,29 +81,29 @@ File Structure:
           y_test.txt          | Activity Number.  
           [D] Inertial Signals  
             body_acc_x_test.txt    | Accelerometer X Data.  
-            body_acc_y_test.txt    | Accelerometer Y Data.
-            body_acc_z_test.txt    | Accelerometer Z Data.
-            body_gyro_x_test.txt   | Gyroscope     X Data.
-            body_gyro_y_test.txt   | Gyroscope     Y Data.
-            body_gyro_z_test.txt   | Gyroscope     Z Data.
-            total_acc_x_test.txt   | Total         X Data.
-            total_acc_y_test.txt   | Total         Y Data.
-            total_acc_z_test.txt   | Total         Z Data.                        
-        [D] train
-          subject_train.txt   | Subject Number
-          X_train.txt         | Subject Data.
-          y_train.txt         | Activity Number.
-          [D] Inertial Signals
-            body_acc_x_train.txt   | Accelerometer X Data.
-            body_acc_y_train.txt   | Accelerometer Y Data.
-            body_acc_z_train.txt   | Accelerometer Z Data.
-            body_gyro_x_train.txt  | Gyroscope     X Data.
-            body_gyro_y_train.txt  | Gyroscope     Y Data.
-            body_gyro_z_train.txt  | Gyroscope     Z Data.
-            total_acc_x_train.txt  | Total         X Data.
-            total_acc_y_train.txt  | Total         Y Data.
-            total_acc_z_train.txt  | Total         Z Data.
-
+            body_acc_y_test.txt    | Accelerometer Y Data.  
+            body_acc_z_test.txt    | Accelerometer Z Data.  
+            body_gyro_x_test.txt   | Gyroscope     X Data.  
+            body_gyro_y_test.txt   | Gyroscope     Y Data.  
+            body_gyro_z_test.txt   | Gyroscope     Z Data.  
+            total_acc_x_test.txt   | Total         X Data.  
+            total_acc_y_test.txt   | Total         Y Data.  
+            total_acc_z_test.txt   | Total         Z Data.  
+        [D] train  
+          subject_train.txt   | Subject Number  
+          X_train.txt         | Subject Data.  
+          y_train.txt         | Activity Number.  
+          [D] Inertial Signals  
+            body_acc_x_train.txt   | Accelerometer X Data.  
+            body_acc_y_train.txt   | Accelerometer Y Data.  
+            body_acc_z_train.txt   | Accelerometer Z Data.  
+            body_gyro_x_train.txt  | Gyroscope     X Data.  
+            body_gyro_y_train.txt  | Gyroscope     Y Data.  
+            body_gyro_z_train.txt  | Gyroscope     Z Data.  
+            total_acc_x_train.txt  | Total         X Data.  
+            total_acc_y_train.txt  | Total         Y Data.  
+            total_acc_z_train.txt  | Total         Z Data.  
+```
 
 
 
