@@ -32,6 +32,10 @@ trainDataFile = "data/UCI HAR Dataset/train/X_train.txt"
 trainActivityFile = "data/UCI HAR Dataset/train/y_train.txt"
 trainSubjectFile = "data/UCI HAR Dataset/train/subject_train.txt"
 
+
+featureList = data.frame(read.table("data/UCI HAR Dataset/features.txt"))
+featureListIndexes = grep("mean()|std()", featureList[,2])
+
 # filtering files based on these attributes
 patternList <- c("body_acc_x", "body_acc_y", "body_acc_z", "body_gyro_x", "body_gyro_y", "body_gyro_z",
                  "total_acc_x", "total_acc_y", "total_acc_z")
@@ -45,7 +49,7 @@ sublistNames = c("BodyAccX", "BodyAccY", "BodyAccZ",
 #-----------
 # -> Reads file, then returns as data frame
 readFileData <- function(targetFile){
-  fwfPattern <- rep(c(-2, 14), times = 128)
+  fwfPattern <- rep(c(-2, 14), times = 561)
   df = read.fwf(targetFile, fwfPattern)
   return(df)
 }
@@ -136,17 +140,20 @@ data = data.frame(c(testSet[,1], trainSet[,1]))
 for(n in 2:limit)
   data = cbind(data, c(testSet[,n], trainSet[,n]))
 
+subsetData = data[,c(1,2,featureListIndexes+2)]
 
 # adjust the labels and store in Results List.
-column.names = c("subject", "activity", paste(rep("sample", 128), 1:128, sep = ""))
-colnames(data) <- column.names
+# column.names = c("subject", "activity", paste(rep("sample", 128), 1:128, sep = ""))
+featureListVector = featureList[,2]
+column.names = c("subject", "activity", as.character(featureListVector[featureListIndexes]))
+colnames(subsetData) <- column.names
 
 # combining data destroys column names, so remaking.
-data$activity = factor(data$activity, levels = c(1,2,3,4,5,6),
+subsetData$activity = factor(subsetData$activity, levels = c(1,2,3,4,5,6),
                        labels = c("walking", "WalkingUpstairs", "walkingDownstairs", "sitting", "standing", "laying"))
 
 # Store data in Results.
-Results$Data = data
+Results$Data = subsetData
 
 # collect the important requested stats.
 Results$DataMean <- mean( compileStat(Results$Data[c(-1,-2)], mean) )
@@ -165,19 +172,22 @@ catch = compileExtraData()
 Results$Test = catch$Test
 Results$Train = catch$Train
 
-# Create tidy data set
-Tidy = list()
-for(action in unique(Results$Data$activity)){
-  Tidy[action] <- mean(compileStat(filter(Results$Data, activity == action)[c(-1,-2)], mean))
-}
 
-for(subject in unique(Results$Data$subject)){
-  Tidy[paste("subject", subject, sep = "")] <- mean(compileStat(filter(Results$Data, subject == subject)[c(-1,-2)], mean))
-}
+#Risregard this section as it's no longer needed
+
+# Create tidy data set
+#Tidy = list()
+#for(action in unique(Results$Data$activity)){
+#  Tidy[action] <- mean(compileStat(filter(Results$Data, activity == action)[c(-1,-2)], mean))
+#}
+
+#for(subject in unique(Results$Data$subject)){
+#  Tidy[paste("subject", subject, sep = "")] <- mean(compileStat(filter(Results$Data, subject == subject)[c(-1,-2)], mean))
+#}
 # Collect tidy data frame
-Results$Tidy = Tidy
+#Results$Tidy = Tidy
 
 
 # rm(list = (ls()[ -(grep("Results", ls())) ]))
 # save(Results, file = "Results.RData")
-write.table(Results$Tidy, file = "TidyData.txt", row.name = FALSE)
+write.table(Results$Data, file = "TidyData.txt", row.name = FALSE)
