@@ -1,0 +1,23 @@
+---
+title: "Machine Learning Project"
+author: "Collin Mitchell"
+date: "February 26, 2016"
+output: html_document
+---
+
+This is for the final Project write up; notes will be copied over and completed from the original file when I'm done.
+
+```{r}
+print("Turtles")
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+
+Documents used:
+https://www.r-project.org/nosvn/conferences/useR-2013/Tutorials/kuhn/user_caret_2up.pdf
+
