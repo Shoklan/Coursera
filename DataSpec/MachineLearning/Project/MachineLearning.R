@@ -23,10 +23,14 @@
 # (406/406 instances correct)
 # The strongest predictor is how the exercise was performed
 #
-# 
+# The Caret package does not seem to have a way to predict using OneR so I'll run a quick predict on the
+# Testing set.
 #
+# Great resource:
+# http://topepo.github.io/caret/training.html 
 #
-#
+# rpart fails: maybe lots of NA's are causing this?
+# running a random forest instead.
 #
 #
 
@@ -34,6 +38,8 @@
 library(data.table)
 library(caret)
 library(RWeka)
+library(rpart)
+library(randomForest)
 
 results = list(Date = Sys.time())
 
@@ -58,12 +64,19 @@ collectData = function(){
   test  <- read.csv("data/pml-testing.csv")
   
   # push collected Data into global space; no multi-returns in R
-  as.data.table(train) ->> trainData
-  as.data.table(test)  ->> testData
+  train ->> trainData
+  test  ->> testData
 }
 
 
-
+###
+# Output class if not integer, and seek NA's in data
+diagnostic <- function(data, target = "integer"){
+  for(i in 1:ncol(data)){
+    if( class(data[,i]) == target  ) print(paste( colnames( data )[i], sum( data[,i] )))
+    else{ print( paste(colnames(data)[i], class( data[,i]))) }
+  }
+}
 
 #######
 # Main
@@ -75,5 +88,15 @@ collectData()
 # train = train data
 # test  = test data
 
-OnePredict <- OneR(classe ~., data = train)
-rpartFit <- train(classe ~ ., data = train, method = "rpart")
+str(trainData)
+
+# This is expected:
+OnePredict          <- OneR(classe ~., data = trainData)
+
+
+rpartFit            <- train(classe ~ ., data = trainData, method = "rpart")
+rpartFitProcess     <- train(classe ~ ., data = trainData, method = "rpart", preProc = c("center", "scale"))
+rpartPredict        <- predict(rpartFit, newdata = testData)
+rpartPredictProcess <- predict(rpartFitProcess, newdata = testData)
+
+rfFit <- train(classe ~ ., trainData, method = "rf")
