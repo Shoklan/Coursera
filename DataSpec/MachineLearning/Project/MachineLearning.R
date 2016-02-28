@@ -31,8 +31,9 @@
 #
 # rpart fails: maybe lots of NA's are causing this?
 # running a random forest instead.
-#
-#
+# 
+# The amount of work to get RWeka working on Ubuntu is fucking hell:
+# http://stackoverflow.com/questions/12872699/error-unable-to-load-installed-packages-just-now/25932828#25932828
 
 
 library(data.table)
@@ -40,6 +41,7 @@ library(caret)
 library(RWeka)
 library(rpart)
 library(randomForest)
+library(dplyr)
 
 results = list(Date = Sys.time())
 
@@ -71,11 +73,42 @@ collectData = function(){
 
 ###
 # Output class if not integer, and seek NA's in data
-diagnostic <- function(data, target = "integer"){
+diagnostic <- function(data){
+  df = data.frame(title = NA, sum = NA)
+  
   for(i in 1:ncol(data)){
-    if( class(data[,i]) == target  ) print(paste( colnames( data )[i], sum( data[,i] )))
-    else{ print( paste(colnames(data)[i], class( data[,i]))) }
-  }
+    # Is Integer - 
+    if( class(data[,i]) == "integer" ){
+      dftemp = data.frame(title = colnames( data )[i], sum = sum( as.numeric(data[,i] )))
+      df = rbind(df, dftemp)
+    }
+    else if( class(data[,i]) == "numeric"){
+      dftemp = data.frame(title = colnames( data )[i], sum = sum( data[,i] ))
+      df = rbind(df, dftemp)
+    }
+    else if( class(data[,i]) == "factor"){
+      dftemp = data.frame(title = colnames( data )[i], sum = "factor" )
+      df = rbind(df, dftemp)
+    }
+    else{
+      dftemp = data.frame(title = colnames( data )[i], sum = NA )
+      df = rbind(df, dftemp)
+    }
+  } # END FOR
+  
+  # return data - dummy value
+  df = df[2:nrow(df),]
+  return( df)
+}
+
+###
+# Class to return which class based on var X
+filterClass <- function(x){
+  if(x < 5594.0) return("A")
+  else if(x < 9372.0) return("B")
+  else if(x < 12825.0) return("C")
+  else if(x < 16035.5) return("D")
+  else return("E")
 }
 
 #######
@@ -90,13 +123,35 @@ collectData()
 
 str(trainData)
 
-# This is expected:
-OnePredict          <- OneR(classe ~., data = trainData)
+# get indexes to filter for not important values
+trainTemp <- trainData
+
+# Is is just incrementing data points,
+# Removing time stamps since they're incremental too
+trainTemp$X <- NULL
+trainTemp$raw_timestamp_part_1 <- NULL
+trainTemp$raw_timestamp_part_2 <- NULL
+trainTemp$cvtd_timestamp <- NULL
+
+OnePredict <- OneR(classe ~., data = trainTemp)
+# Kurtosis_yaw_arm
 
 
-rpartFit            <- train(classe ~ ., data = trainData, method = "rpart")
-rpartFitProcess     <- train(classe ~ ., data = trainData, method = "rpart", preProc = c("center", "scale"))
-rpartPredict        <- predict(rpartFit, newdata = testData)
-rpartPredictProcess <- predict(rpartFitProcess, newdata = testData)
+trainCleaned <- diagnostic(trainTemp)
 
-rfFit <- train(classe ~ ., trainData, method = "rf")
+# using just grep doesn't seem to work - which makes no sense.
+notNA <- grep(TRUE, !is.na(trainCleaned$sum))
+
+# Columns match up! That means I can use my references to subset the data into
+# two different models 
+temp$title == colnames(trainData)
+
+temp <- temp[notNA,]
+
+
+rpartFit <- train(classe ~ ., data = trainTemp[,notNA], method = "rpart")
+#rpartFitProcess     <- train(classe ~ ., data = trainData, method = "rpart", preProc = c("center", "scale"))
+#rpartPredict        <- predict(rpartFit, newdata = testData)
+#rpartPredictProcess <- predict(rpartFitProcess, newdata = testData)
+
+#rfFit <- train(classe ~ ., trainData, method = "rf")
