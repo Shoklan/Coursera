@@ -109,8 +109,6 @@
 
 
 # Research:
-
-# Reference:
 - Sampling?
 - What is a Bonferroni correction?
 - What is the G-Test?
@@ -137,3 +135,5 @@
 - lmerTest package
 - multicomp package
 - Goodness of Fit test
+
+# Reference:
