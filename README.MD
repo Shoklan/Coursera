@@ -1,9 +1,11 @@
 # Coursera Classes
 ## Place to Store Notes and Completed Coursera Classes
 
-| Class | Directory | Timeline | Status |
-| ----- | --------- | -------- | ------ |
-| Designing, Running, and Analyzing Experiments | DesRunAnaExperiments | 2017/06/07-2017/06/14 | A |
+
+| Class Name                                           | Directory                                | Date Completed              | Reviewed |
+| -----------------------------------------------------| -----------------------------------------| ----------------------------| ---------|
+| Designing, Running, and Analyzing Experiments        |                                          | {2017/06/07-2017/06/14}     |          |
+| Build Basic Generative Adversarial Networks (GANs)   | [/BuildBasicGANs]                        | {2021/01/03-}               |          |
 
 
 
